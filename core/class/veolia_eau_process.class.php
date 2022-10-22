@@ -63,19 +63,32 @@ class veolia_eau extends eqLogic {
     public static function cronHourly() {
 		foreach (eqLogic::byType('veolia_eau', true) as $veolia_eau) {
             $heure_releve = intval($veolia_eau->getConfiguration('heure'));
-            if ($heure_releve > 23) $heure_releve = 6;
 
-            log::add('veolia_eau', 'debug', 'heure de relève: '.$heure_releve);
-            if (date('G') == $heure_releve) {
-				if ($veolia_eau->getIsEnable() == 1) {
-					if (!empty($veolia_eau->getConfiguration('login')) && !empty($veolia_eau->getConfiguration('password'))) {
+            if ($heure_releve = -1) {
+                log::add('veolia_eau', 'debug', 'heure de relève: Auto');
+                if ($veolia_eau->getIsEnable() == 1) {
+                    if (!empty($veolia_eau->getConfiguration('login')) && !empty($veolia_eau->getConfiguration('password'))) {
                         $veolia_eau->getConso(0);
                         log::add('veolia_eau', 'debug', 'done... ');
-					} else {
-					    log::add('veolia_eau', 'error', 'Identifiants non saisis');
-					}
-				}
-			}
+                    } else {
+                        log::add('veolia_eau', 'error', 'Identifiants non saisis');
+                    }
+                }
+            } else {
+                if ($heure_releve > 23) $heure_releve = 6;
+
+                log::add('veolia_eau', 'debug', 'heure de relève: '.$heure_releve);
+                if (date('G') == $heure_releve) {
+                    if ($veolia_eau->getIsEnable() == 1) {
+                        if (!empty($veolia_eau->getConfiguration('login')) && !empty($veolia_eau->getConfiguration('password'))) {
+                            $veolia_eau->getConso(0);
+                            log::add('veolia_eau', 'debug', 'done... ');
+                        } else {
+                            log::add('veolia_eau', 'error', 'Identifiants non saisis');
+                        }
+                    }
+                }
+            }
 		}
     }
 
@@ -535,11 +548,11 @@ class veolia_eau extends eqLogic {
 				curl_setopt($ch, CURLOPT_URL, $url_consommation);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 				curl_setopt($ch, CURLOPT_FILE, $fp);
-                
+
                 $idAbt = $this->getConfiguration('idAbt', 0);
                 if ($idAbt) {
                     curl_setopt($ch, CURLOPT_POSTFIELDS, 'idAbt='.$idAbt);
-                }        
+                }
 
                 if ($mock_test >= 2) {
                     $response = 1;

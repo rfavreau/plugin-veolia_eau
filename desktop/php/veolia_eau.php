@@ -34,7 +34,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 				<a id="bt_resetSearch" class="btn roundedRight" style="width:30px"><i class="fas fa-times"></i></a>
 			</div>
         </div>
-        
+
         <div class="eqLogicThumbnailContainer">
             <?php
                 foreach ($eqLogics as $eqLogic) {
@@ -160,6 +160,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
                             <label class="col-sm-3 control-label">{{Heure de relève}}</label>
                             <div class="col-sm-3">
                                 <select class="form-control configuration eqLogicAttr" data-l1key="configuration" data-l2key="heure">
+                                    <option value="-1">Auto</option>
                                     <?php
                                     for ($heure=0; $heure<24; $heure++) {
                                         echo '<option value="'.$heure.'">'.$heure.'H00</option>';
